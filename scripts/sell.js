@@ -11,19 +11,30 @@ const FACTORY_CONTRACT_ADDRESS = process.env.FACTORY_CONTRACT_ADDRESS
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS
 const NETWORK = process.env.NETWORK
 const API_KEY = process.env.API_KEY
-const DUTCH_AUCTION_OPTION_ID = "1";
-const DUTCH_AUCTION_START_AMOUNT = 100;
-const DUTCH_AUCTION_END_AMOUNT = 50;    
-const NUM_DUTCH_AUCTIONS = 5;
+const DAI_ADDRESS = process.env.DAI_ADDRESS
+const NUM_OPTIONS = 26
+const SOLD_SO_FAR = 5
+const NUM_TO_SELL = 10
 
-const FIXED_PRICE_OPTION_ID = "2";
-const NUM_FIXED_PRICE_AUCTIONS = 10;
-const FIXED_PRICE = 100;
-
-const INCLINE_PRICE_START = 10;
-const INCREMENT_AMOUNT = 10;
-const NUM_PER_INCREMENT = 5;
-const NUM_INCREMENTS = 20;
+// const DATA = [
+//     {
+//         'price': 85,
+//         'quantity': 50 
+//     },
+//     {
+//         'price': 45,
+//         'quantity': 100
+//     },
+//     {
+//         'price': 1,
+//         'token': "ETH",
+//         'quantity': 15
+//     },
+//     {
+//         'price': 85,
+//         'quantity': 150
+//     }
+// ]
 
 if (!MNEMONIC || !INFURA_KEY || !NETWORK || !OWNER_ADDRESS || !FACTORY_CONTRACT_ADDRESS || !API_KEY) {
     console.error("Please set a mnemonic, infura key, owner, network, API key, and factory contract address.")
@@ -40,40 +51,50 @@ providerEngine.addProvider(mnemonicWalletSubprovider)
 providerEngine.addProvider(infuraRpcSubprovider)
 providerEngine.start();
 
+const network = NETWORK === 'mainnet' ? Network.Main : Network.Rinkeby 
 const seaport = new OpenSeaPort(providerEngine, {
-  networkName: Network.Rinkeby,
+  networkName: network,
   apiKey: API_KEY
 }, (arg) => console.log(arg))
 
 async function main() {
 
     // Example: many fixed price auctions.
-    console.log("Creating fixed price auctions...")
-    const fixedSellOrders = await seaport.createFactorySellOrders({
-        assetId: FIXED_PRICE_OPTION_ID,
-        factoryAddress: FACTORY_CONTRACT_ADDRESS,
-        accountAddress: OWNER_ADDRESS,
-        startAmount: FIXED_PRICE,
-        numberOfOrders: NUM_FIXED_PRICE_AUCTIONS
-    })
-    console.log(`Successfully made ${fixedSellOrders.length} fixed-price sell orders! ${fixedSellOrders[0].asset.openseaLink}\n`)
+    for (var i = 0; i < NUM_OPTIONS; i++) {
+        const response = await fetch("https://opensea-items-api.herokuapp.com/api/factory/" + i)
+        const data = await response.json()
+        const price = data['cost']
 
-    // Example: many declining Dutch auction.
-    console.log("Creating dutch auctions...")
-    // Expire one day from now
-    const expirationTime = Math.round(Date.now() / 1000 + 60 * 60 * 24)
-    const dutchSellOrders = await seaport.createFactorySellOrders({
-        assetId: DUTCH_AUCTION_OPTION_ID,
-        factoryAddress: FACTORY_CONTRACT_ADDRESS,
-        accountAddress: OWNER_ADDRESS, 
-        startAmount: DUTCH_AUCTION_START_AMOUNT,
-        endAmount: DUTCH_AUCTION_END_AMOUNT,
-        expirationTime: expirationTime,
-        numberOfOrders: NUM_DUTCH_AUCTIONS
-    })
-    console.log(`Successfully made ${dutchSellOrders.length} Dutch-auction sell orders! ${dutchSellOrders[0].asset.openseaLink}\n`)
+        if (i === 6) {
+            continue;
+        }
 
-    // TODO: Incremental prices example.
+        if (i <= 7) {
+            continue;
+        }
+
+        const totalToSell = Math.min(data['quantity'], NUM_TO_SELL)
+        let quantity = totalToSell - SOLD_SO_FAR
+
+        if (quantity <= 0) {
+            console.log("Finished selling option " + data)
+            continue
+        }
+
+        console.log("Would sell " + data['quantity'] + " " + data['name'] + " for " + price)
+        console.log(FACTORY_CONTRACT_ADDRESS)
+        const sellData = {
+            assetId: i,
+            factoryAddress: FACTORY_CONTRACT_ADDRESS,
+            accountAddress: OWNER_ADDRESS,
+            startAmount: price,
+            numberOfOrders: quantity,
+        }
+
+        
+        const fixedSellOrders = await seaport.createFactorySellOrders(sellData)
+        console.log(`Successfully made ${fixedSellOrders.length} fixed-price sell orders! ${fixedSellOrders[0].asset.openseaLink}\n`)
+    }
 }
 
 main()

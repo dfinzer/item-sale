@@ -1,3 +1,3 @@
-./node_modules/.bin/truffle-flattener contracts/Creature.sol > flattened/Creature.sol
-./node_modules/.bin/truffle-flattener contracts/CreatureFactory.sol > flattened/CreatureFactory.sol
-./node_modules/.bin/truffle-flattener contracts/CreatureLootBox.sol > flattened/CreatureLootBox.sol
+./node_modules/.bin/truffle-flattener contracts/Item.sol > flattened/Item.sol
+./node_modules/.bin/truffle-flattener contracts/ItemFactory.sol > flattened/ItemFactory.sol
+./node_modules/.bin/truffle-flattener contracts/OpenSeaToken.sol > flattened/OpenSeaToken.sol

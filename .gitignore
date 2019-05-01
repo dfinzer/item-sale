@@ -1,4 +1,5 @@
 build/
+.env*
 flattened/
 node_modules/
 .env
