@@ -13,7 +13,7 @@ module.exports = function(deployer, network) {
 
   //deployer.deploy(OpenSeaToken, {gas: 5000000});
 
-  deployer.deploy(ItemFactory, proxyRegistryAddress, "0x5f896c654a08323dbe16aded331c461ccaeeb370", {gas: 5000000});
+  deployer.deploy(ItemFactory, proxyRegistryAddress, "0xcab298344dec6547af008d91064a24f0455c749c", {gas: 5000000});
   // deployer.deploy(Item, proxyRegistryAddress, {gas: 5000000}).then(() => {
   //   return deployer.deploy(ItemFactory, proxyRegistryAddress, Item.address, {gas: 7000000});
   // }).then(async() => {

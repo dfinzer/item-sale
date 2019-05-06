@@ -11,7 +11,7 @@ contract ItemFactory is Factory, Ownable {
   address public proxyRegistryAddress;
   address public nftAddress;
   address public lootBoxNftAddress;
-  string public baseURI = "https://opensea-items-api.herokuapp.com/api/factory/";
+  string public baseURI = "https://cadaf-metadata.herokuapp.com/api/factory/";
   
   uint256 NUM_OPTIONS = 0;
 
