@@ -18,6 +18,9 @@ contract TradeableERC721Token is ERC721Token, Ownable {
   using Strings for string;
 
   address proxyRegistryAddress;
+  
+  // Mapping from token ID to item type.
+  mapping (uint256 => uint256) public itemTypes;
 
   constructor(string _name, string _symbol, address _proxyRegistryAddress) ERC721Token(_name, _symbol) public {
     proxyRegistryAddress = _proxyRegistryAddress;
@@ -27,9 +30,10 @@ contract TradeableERC721Token is ERC721Token, Ownable {
     * @dev Mints a token to an address with a tokenURI.
     * @param _to address of the future owner of the token
     */
-  function mintTo(address _to) public onlyOwner {
+  function mintTo(address _to, uint256 _itemType) public onlyOwner {
     uint256 newTokenId = _getNextTokenId();
     _mint(_to, newTokenId);
+    itemTypes[newTokenId] = _itemType;
   }
 
   /**
@@ -47,6 +51,8 @@ contract TradeableERC721Token is ERC721Token, Ownable {
   function tokenURI(uint256 _tokenId) public view returns (string) {
     return Strings.strConcat(
         baseTokenURI(),
+        Strings.uint2str(itemTypes[_tokenId]),
+        "/",
         Strings.uint2str(_tokenId)
     );
   }

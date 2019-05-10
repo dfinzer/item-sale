@@ -1,6 +1,6 @@
-const Creature = artifacts.require("./Creature.sol");
-const CreatureFactory = artifacts.require("./CreatureFactory.sol")
-const CreatureLootBox = artifacts.require("./CreatureLootBox.sol");
+const Item = artifacts.require("./Item.sol");
+const ItemFactory = artifacts.require("./ItemFactory.sol")
+const OpenSeaToken = artifacts.require("./OpenSeaToken.sol")
 
 module.exports = function(deployer, network) {
   // OpenSea proxy registry addresses for rinkeby and mainnet.
@@ -11,13 +11,13 @@ module.exports = function(deployer, network) {
     proxyRegistryAddress = "0xa5409ec958c83c3f309868babaca7c86dcb077c1";
   }
 
-  deployer.deploy(Creature, proxyRegistryAddress, {gas: 5000000});
-  
-  // Uncomment this if you want initial item sale support.
-  // deployer.deploy(Creature, proxyRegistryAddress, {gas: 5000000}).then(() => {
-  //   return deployer.deploy(CreatureFactory, proxyRegistryAddress, Creature.address, {gas: 7000000});
+  //deployer.deploy(OpenSeaToken, {gas: 5000000});
+
+  deployer.deploy(ItemFactory, proxyRegistryAddress, "0xcab298344dec6547af008d91064a24f0455c749c", {gas: 5000000});
+  // deployer.deploy(Item, proxyRegistryAddress, {gas: 5000000}).then(() => {
+  //   return deployer.deploy(ItemFactory, proxyRegistryAddress, Item.address, {gas: 7000000});
   // }).then(async() => {
-  //   var creature = await Creature.deployed();
-  //   return creature.transferOwnership(CreatureFactory.address);
+  //   var item = await Item.deployed();
+  //   return item.transferOwnership(ItemFactory.address);
   // })
 };

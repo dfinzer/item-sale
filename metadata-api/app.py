@@ -11,29 +11,32 @@ GOOGLE_STORAGE_BUCKET = os.environ['GOOGLE_STORAGE_BUCKET']
 
 app = Flask(__name__)
 
-FIRST_NAMES = ['Herbie', 'Sprinkles', 'Boris', 'Dave', 'Randy', 'Captain']
-LAST_NAMES = ['Starbelly', 'Fisherton', 'McCoy']
-
-BASES = ['jellyfish', 'starfish', 'crab', 'narwhal', 'tealfish', 'goldfish']
-EYES = ['big', 'joy', 'wink', 'sleepy', 'content']
-MOUTH = ['happy', 'surprised', 'pleased', 'cute']
-
-
-INT_ATTRIBUTES = [5, 2, 3, 4, 8]
-FLOAT_ATTRIBUTES = [1.4, 2.3, 11.7, 90.2, 1.2]
-STR_ATTRIBUTES = [
-    'happy',
-    'sad',
-    'sleepy',
-    'boring'
+DATA = [
+    {
+        "name": "Andreas M. Antonopoulos Limited Edition & Signed Book (NFT)",
+        "description": "A special signed & rare NFT edition of Andreas M. Antonopoulos' Mastering Ethereum. ONLY 50 NFTs to be minted. Commemorate your experience with a piece of history!",
+        "sizes": [],
+        "colors": []
+    },
+    {
+        "name": "Andreas M. Antonopoulos Limited Edition & Signed Book (NFT)",
+        "description": "A special signed & rare NFT edition of Andreas M. Antonopoulos' Mastering Ethereum. ONLY 50 NFTs to be minted. Commemorate your experience with a piece of history!",
+        "sizes": [],
+        "colors": []
+    },
+    {
+        "name": "Andreas M. Antonopoulos Unsigned Mastering Ethereum"
+        "description": ""
+    },
+    {
+        ""
+    }
 ]
-BOOST_ATTRIBUTES = [10, 40, 30]
-PERCENT_BOOST_ATTRIBUTES = [5, 10, 15]
-NUMBER_ATTRIBUTES = [1, 2, 1, 1]
 
 
-@app.route('/api/creature/<token_id>')
-def creature(token_id):
+@app.route('/api/item/<option_id>/<token_id>')
+def item(option_id, token_id):
+    option_id = int(option_id)
     token_id = int(token_id)
     num_first_names = len(FIRST_NAMES)
     num_last_names = len(LAST_NAMES)
@@ -42,10 +45,6 @@ def creature(token_id):
     base = BASES[token_id % len(BASES)]
     eyes = EYES[token_id % len(EYES)]
     mouth = MOUTH[token_id % len(MOUTH)]
-    image_url = _compose_image(['images/bases/base-%s.png' % base,
-                                'images/eyes/eyes-%s.png' % eyes,
-                                'images/mouths/mouth-%s.png' % mouth],
-                               token_id)
 
     attributes = []
     _add_attribute(attributes, 'base', BASES, token_id)
@@ -62,60 +61,22 @@ def creature(token_id):
     return jsonify({
         'name': creature_name,
         'description': "Friendly OpenSea Creature that enjoys long swims in the ocean.",
-        'image': image_url,
         'external_url': 'https://openseacreatures.io/%s' % token_id,
         'attributes': attributes
     })
 
 
-@app.route('/api/box/<token_id>')
-def box(token_id):
-    token_id = int(token_id)
-    image_url = _compose_image(['images/box/lootbox.png'], token_id, "box")
-
-    attributes = []
-    _add_attribute(attributes, 'number_inside', [3], token_id)
+@app.route('/api/factory/<option_id>')
+def factory(option_id):
+    option_id = int(option_id)
+    data = DATA[option_id]
 
     return jsonify({
-        'name': "Creature Loot Box",
-        'description': "This lootbox contains some OpenSea Creatures! It can also be traded!",
-        'image': image_url,
-        'external_url': 'https://openseacreatures.io/%s' % token_id,
-        'attributes': attributes
-    })
-
-
-@app.route('/api/factory/<token_id>')
-def factory(token_id):
-    token_id = int(token_id)
-    if token_id == 0:
-        name = "One OpenSea creature"
-        description = "When you purchase this option, you will receive a single OpenSea creature of a random variety. " \
-                      "Enjoy and take good care of your aquatic being!"
-        image_url = _compose_image(['images/factory/egg.png'], token_id, "factory")
-        num_inside = 1
-    elif token_id == 1:
-        name = "Four OpenSea creatures"
-        description = "When you purchase this option, you will receive four OpenSea creatures of random variety. " \
-                      "Enjoy and take good care of your aquatic beings!"
-        image_url = _compose_image(['images/factory/four-eggs.png'], token_id, "factory")
-        num_inside = 4
-    elif token_id == 2:
-        name = "One OpenSea creature lootbox"
-        description = "When you purchase this option, you will receive one lootbox, which can be opened to reveal three " \
-                      "OpenSea creatures of random variety. Enjoy and take good care of these cute aquatic beings!"
-        image_url = _compose_image(['images/box/lootbox.png'], token_id, "factory")
-        num_inside = 3
-
-    attributes = []
-    _add_attribute(attributes, 'number_inside', [num_inside], token_id)
-
-    return jsonify({
-        'name': name,
-        'description': description,
-        'image': image_url,
-        'external_url': 'https://openseacreatures.io/%s' % token_id,
-        'attributes': attributes
+        'name': data['name'],
+        'description': data['description'],
+        #'image': image_url,
+        #'external_url': 'https://openseacreatures.io/%s' % token_id,
+        #'attributes': attributes
     })
 
 

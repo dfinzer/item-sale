@@ -42,6 +42,11 @@ module.exports = {
         currency: 'USD',
         gasPrice: 2
       }
-    }
+    },
+    compilers: {
+      solc: {
+        version: "v0.4.24_commit.e67f0147"
+      }
+    },
   }
 };
